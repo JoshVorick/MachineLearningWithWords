@@ -1,0 +1,81 @@
+#Machine Learning exmple comparing similarity of words using scabble values
+letter_values = {'a':1,'b':3,'c':3,'d':2,'e':1,'f':4,'g':2,'h':4,'i':1,'j':8,'k':5,'l':1,'m':3,'n':1,'o':1,'p':3,'q':10,'r':1,'s':1,'t':1,'u':1,'v':4,'w':4,'x':8,'y':4,'z':1}
+
+#for testing
+words = ["sobo", "osob", "boso", "oob", "obo", "sob"]
+
+#initial dictionary
+words = ["a", "and", "apple", "awesome", "banana", "be", "because", "boy", "cats", "child", "company", "day", "different", "doggy", "elephant",
+         "for", "frog", "from", "giraffe", "government", "group", "hand", "have", "hello",
+         "iguana", "i", "important", "in", "inspire", "it", "jealous", "jokester", "know", "knight", "kite",
+         "llama", "make", "megatron", "moist", "ninja", "not", "nuaghty", "number", "of", "on", "optimal", "panic", "persona", "pirate", "place", "pretty", "problem", "qualified",
+         "really", "random", "small", "stupid", "super", "tall", "that", "the", "thing", "time", "to",
+         "ultra", "violet", "whale", "when", "which", "while", "woman", "xylophones", "year", "yell", "zoology"]
+
+#determines how similar two input words are
+def similarity(a,b):
+  sim = 0
+  combo = 0
+  for l_a in a:
+    sim_initial = sim
+    for l_b in b:
+      if l_a == l_b:
+        combo += 1
+        sim += 1#(letter_values[l_a]+1)/2
+        if combo:
+          sim += combo#*(letter_values[l_a]+1)/2
+        break
+    if sim == sim_initial:
+      combo = 0
+      sim -= 1
+  if (a!=b):
+    return sim
+  else:
+    return sim
+
+#removes any non-letter elements from a string
+def remove_spaces(a):
+  b = ""
+  for i in a:
+    isnt_letter = False
+    lowercase_letters = "abcdefghijklmnopqrstuvwxyz"
+    for j in lowercase_letters:
+      if i == j:
+        b += i
+        break
+  return b
+
+#determine most similar words of all words in dictionary
+for word in words:
+  sim_array = []
+  
+  for i in words:
+    if i != word:
+      sim_array.append([similarity(word, i)+similarity(i, word), i])
+
+  for i in range(len(sim_array)):
+    if sim_array[i] == max(sim_array):
+      print list([word, sim_array[i][1]])
+
+#asks for a word, adds it to dictionary and returns the most similar
+while True:
+  word = remove_spaces(raw_input("Give me a word: ").lower())
+  sim_array = []
+  
+  for i in words:
+    if i != word:
+      sim_array.append([similarity(word, i)+similarity(i, word), i])
+
+  for i in range(len(sim_array)):
+    if sim_array[i] == max(sim_array):
+      print "Most similar word is: " + sim_array[i][1]
+      print " "
+      
+  is_in_list = False
+  for w in words:
+    if word == w:
+      is_in_list = True
+      
+  if is_in_list == False:
+    words.append(word)
+
