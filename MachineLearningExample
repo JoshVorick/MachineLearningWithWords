@@ -1,24 +1,33 @@
 #Machine Learning exmple comparing similarity of words using scabble values
 letter_values = {'a':1,'b':3,'c':3,'d':2,'e':1,'f':4,'g':2,'h':4,'i':1,'j':8,'k':5,'l':1,'m':3,'n':1,'o':1,'p':3,'q':10,'r':1,'s':1,'t':1,'u':1,'v':4,'w':4,'x':8,'y':4,'z':1}
 
+#open file to read/write the words from/in
+my_word_file = open("Words.txt","r")
+
+words = my_word_file.read().split(',')
+
 #for testing
-words = ["sobo", "osob", "boso", "oob", "obo", "sob"]
+#words = ["sobo", "osob", "boso", "oob", "obo", "sob"]
 
 #initial dictionary
-words = ["a", "and", "apple", "awesome", "banana", "be", "because", "boy", "cats", "child", "company", "day", "different", "doggy", "elephant",
-         "for", "frog", "from", "giraffe", "government", "group", "hand", "have", "hello",
-         "iguana", "i", "important", "in", "inspire", "it", "jealous", "jokester", "know", "knight", "kite",
-         "llama", "make", "megatron", "moist", "ninja", "not", "nuaghty", "number", "of", "on", "optimal", "panic", "persona", "pirate", "place", "pretty", "problem", "qualified",
-         "really", "random", "small", "stupid", "super", "tall", "that", "the", "thing", "time", "to",
-         "ultra", "violet", "whale", "when", "which", "while", "woman", "xylophones", "year", "yell", "zoology"]
+#words = ["a", "and", "apple", "awesome", "banana", "be", "because", "boy", "cats", "child", "company", "day", "different", "doggy", "elephant",
+#         "for", "frog", "from", "giraffe", "government", "group", "hand", "have", "hello",
+#         "iguana", "i", "important", "in", "inspire", "it", "jealous", "jokester", "know", "knight", "kite",
+#         "llama", "make", "megatron", "moist", "ninja", "not", "nuaghty", "number", "of", "on", "optimal", "panic", "persona", "pirate", "place", "pretty", "problem", "qualified",
+#         "really", "random", "small", "stupid", "super", "tall", "that", "the", "thing", "time", "to",
+#         "ultra", "violet", "whale", "when", "which", "while", "woman", "xylophones", "year", "yell", "zoology"]
+
+my_word_file.close()
 
 #determines how similar two input words are
+
 def similarity(a,b):
   sim = 0
   combo = 0
   for l_a in a:
     sim_initial = sim
     for l_b in b:
+      
       if l_a == l_b:
         combo += 1
         sim += 1#(letter_values[l_a]+1)/2
@@ -58,8 +67,14 @@ for word in words:
       print list([word, sim_array[i][1]])
 
 #asks for a word, adds it to dictionary and returns the most similar
-while True:
-  word = remove_spaces(raw_input("Give me a word: ").lower())
+still_going = True
+while still_going:
+  a = raw_input("Give me a word: ")
+  if a == "-1":
+    still_going = False
+    break
+  else:
+    word = remove_spaces(a.lower())
   sim_array = []
   
   for i in words:
@@ -78,4 +93,26 @@ while True:
       
   if is_in_list == False:
     words.append(word)
+
+words.sort()
+
+my_word_file = open("Words.txt","w")
+my_word_file.write(words[0])
+i = 0
+for w in words:
+  if i==0:
+    i = 1
+  else:
+    my_word_file.write("," + w)
+my_word_file.close()
+
+my_word_file = open("BackupWords.txt","w")
+my_word_file.write(words[0])
+i = 0
+for w in words:
+  if i==0:
+    i = 1
+  else:
+    my_word_file.write("," + w)
+my_word_file.close()
 
