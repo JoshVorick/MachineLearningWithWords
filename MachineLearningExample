@@ -35,7 +35,7 @@ def similarity(a,b):
         break
     if sim == sim_initial:
       combo = 0.0
-      sim -= combo_constant*dissimilar_constant
+      sim -= dissimilar_constant
   if (a!=b):
     return sim
   else:
@@ -52,57 +52,6 @@ def remove_spaces(a):
         b += i
         break
   return b
-
-def try_combo(input, output):
-  global combo_constant
-  iterations = 0.0
-  no_change = True
-  new_word = ""
-  while no_change:
-    iterations += 1.0
-    combo_constant += 1.0
-    for i in words:
-      if i != input:
-        sim_array.append([similarity(input, i)+similarity(i, input), i])
-    for i in range(len(sim_array)):
-      if sim_array[i] == max(sim_array):
-        new_word = sim_array[i][1]
-        if new_word != output:
-          no_change = False
-    if iterations > 9:
-      no_change = False
-          
-  if new_word != output and raw_input("Is " + new_word + " better? (Y/N): ").lower()[0] == 'y':
-    return True
-  else:
-    combo_constant -= iterations * 1.0
-    return False
-
-def try_dissimilar(input, output):
-  global dissimilar_constant
-  iterations = 0.0
-  no_change = True
-  new_word = ""
-  while no_change:
-    iterations += 1.0
-    dissimilar_constant += 1.0
-    for i in words:
-      if i != input:
-        sim_array.append([similarity(input, i)+similarity(i, input), i])
-    for i in range(len(sim_array)):
-      if sim_array[i] == max(sim_array):
-        new_word = sim_array[i][1]
-        if new_word != output:
-          no_change = False
-    if iterations > 9:
-      no_change = False
-          
-  if new_word != output and raw_input("Is " + new_word + " better? (Y/N): ").lower()[0] == 'y':
-    return True
-  else:
-    dissimilar_constant -= iterations * 1.0
-    return False
-
 
 #determine most similar words of all words in dictionary
 for word in words:
@@ -134,12 +83,6 @@ while still_going:
   for i in range(len(sim_array)):
     if sim_array[i] == max(sim_array):
       print "Most similar word is: " + sim_array[i][1]
-      ans = raw_input("Was this accurate? (Y/N): ").lower()
-      if ans[0] == 'n':
-        try_combo(word, sim_array[i][1])
-        try_dissimilar(word, sim_array[i][1])
-      
-      print "combo: %0.2f dis: %0.2f" % (combo_constant, dissimilar_constant)
       print " "
       
   is_in_list = False
@@ -152,21 +95,22 @@ while still_going:
 
 words.sort()
 
+#write to file
 my_word_file = open("Words.txt","w")
-my_word_file.write(words[0])
 i = 0
 for w in words:
   if i==0:
+    my_word_file.write(w)
     i = 1
   else:
     my_word_file.write("," + w)
 my_word_file.close()
 
 my_word_file = open("BackupWords.txt","w")
-my_word_file.write(words[0])
 i = 0
 for w in words:
   if i==0:
+    my_word_file.write(w)
     i = 1
   else:
     my_word_file.write("," + w)
