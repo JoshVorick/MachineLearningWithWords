@@ -1,6 +1,9 @@
 #Machine Learning exmple comparing similarity of words using scabble values
 letter_values = {'a':1,'b':3,'c':3,'d':2,'e':1,'f':4,'g':2,'h':4,'i':1,'j':8,'k':5,'l':1,'m':3,'n':1,'o':1,'p':3,'q':10,'r':1,'s':1,'t':1,'u':1,'v':4,'w':4,'x':8,'y':4,'z':1}
 
+combo_constant = 1.0
+dissimilar_constant = 1.0
+
 #open file to read/write the words from/in
 my_word_file = open("Words.txt","r")
 
@@ -20,23 +23,19 @@ words = my_word_file.read().split(',')
 my_word_file.close()
 
 #determines how similar two input words are
-
 def similarity(a,b):
-  sim = 0
-  combo = 0
+  sim = 0.0
+  combo = 0.0
   for l_a in a:
     sim_initial = sim
     for l_b in b:
-      
       if l_a == l_b:
-        combo += 1
-        sim += 1#(letter_values[l_a]+1)/2
-        if combo:
-          sim += combo#*(letter_values[l_a]+1)/2
+        combo += combo_constant
+        sim += combo#*(letter_values[l_a]+1)/2.0
         break
     if sim == sim_initial:
-      combo = 0
-      sim -= 1
+      combo = 0.0
+      sim -= combo_constant*dissimilar_constant
   if (a!=b):
     return sim
   else:
@@ -53,6 +52,57 @@ def remove_spaces(a):
         b += i
         break
   return b
+
+def try_combo(input, output):
+  global combo_constant
+  iterations = 0.0
+  no_change = True
+  new_word = ""
+  while no_change:
+    iterations += 1.0
+    combo_constant += 1.0
+    for i in words:
+      if i != input:
+        sim_array.append([similarity(input, i)+similarity(i, input), i])
+    for i in range(len(sim_array)):
+      if sim_array[i] == max(sim_array):
+        new_word = sim_array[i][1]
+        if new_word != output:
+          no_change = False
+    if iterations > 9:
+      no_change = False
+          
+  if new_word != output and raw_input("Is " + new_word + " better? (Y/N): ").lower()[0] == 'y':
+    return True
+  else:
+    combo_constant -= iterations * 1.0
+    return False
+
+def try_dissimilar(input, output):
+  global dissimilar_constant
+  iterations = 0.0
+  no_change = True
+  new_word = ""
+  while no_change:
+    iterations += 1.0
+    dissimilar_constant += 1.0
+    for i in words:
+      if i != input:
+        sim_array.append([similarity(input, i)+similarity(i, input), i])
+    for i in range(len(sim_array)):
+      if sim_array[i] == max(sim_array):
+        new_word = sim_array[i][1]
+        if new_word != output:
+          no_change = False
+    if iterations > 9:
+      no_change = False
+          
+  if new_word != output and raw_input("Is " + new_word + " better? (Y/N): ").lower()[0] == 'y':
+    return True
+  else:
+    dissimilar_constant -= iterations * 1.0
+    return False
+
 
 #determine most similar words of all words in dictionary
 for word in words:
@@ -84,6 +134,12 @@ while still_going:
   for i in range(len(sim_array)):
     if sim_array[i] == max(sim_array):
       print "Most similar word is: " + sim_array[i][1]
+      ans = raw_input("Was this accurate? (Y/N): ").lower()
+      if ans[0] == 'n':
+        try_combo(word, sim_array[i][1])
+        try_dissimilar(word, sim_array[i][1])
+      
+      print "combo: %0.2f dis: %0.2f" % (combo_constant, dissimilar_constant)
       print " "
       
   is_in_list = False
