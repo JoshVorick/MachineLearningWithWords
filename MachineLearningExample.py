@@ -1,45 +1,37 @@
-#Machine Learning exmple comparing similarity of words using scabble values
-letter_values = {'a':1,'b':3,'c':3,'d':2,'e':1,'f':4,'g':2,'h':4,'i':1,'j':8,'k':5,'l':1,'m':3,'n':1,'o':1,'p':3,'q':10,'r':1,'s':1,'t':1,'u':1,'v':4,'w':4,'x':8,'y':4,'z':1}
-
+#Determine similarity of words
 combo_constant = 1.0
-dissimilar_constant = 1.0
+letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
 #open file to read/write the words from/in
 my_word_file = open("Words.txt","r")
-
 words = my_word_file.read().split(',')
-
-#for testing
-#words = ["sobo", "osob", "boso", "oob", "obo", "sob"]
-
-#initial dictionary
-#words = ["a", "and", "apple", "awesome", "banana", "be", "because", "boy", "cats", "child", "company", "day", "different", "doggy", "elephant",
-#         "for", "frog", "from", "giraffe", "government", "group", "hand", "have", "hello",
-#         "iguana", "i", "important", "in", "inspire", "it", "jealous", "jokester", "know", "knight", "kite",
-#         "llama", "make", "megatron", "moist", "ninja", "not", "nuaghty", "number", "of", "on", "optimal", "panic", "persona", "pirate", "place", "pretty", "problem", "qualified",
-#         "really", "random", "small", "stupid", "super", "tall", "that", "the", "thing", "time", "to",
-#         "ultra", "violet", "whale", "when", "which", "while", "woman", "xylophones", "year", "yell", "zoology"]
-
 my_word_file.close()
+#words = ["drop", "water", "abcdefghijklmnopqrstuvwxyz", "qwertyuioplkjhgfdsazxcvbnm"]
+
+letter_vectors = []
+
+for word in words:
+  a = []
+  for i in letters:
+    num_in_word = 0
+    for letter in word:
+      if letter == i:
+        num_in_word += 1
+    a.append(num_in_word)
+  letter_vectors.append(a)
 
 #determines how similar two input words are
-def similarity(a,b):
+def calc_consecutive_letters(a,b):
   sim = 0.0
-  combo = 0.0
-  for l_a in a:
-    sim_initial = sim
-    for l_b in b:
-      if l_a == l_b:
-        combo += combo_constant
-        sim += combo#*(letter_values[l_a]+1)/2.0
-        break
-    if sim == sim_initial:
-      combo = 0.0
-      sim -= dissimilar_constant
-  if (a!=b):
-    return sim
-  else:
-    return sim
+  for i in range(len(a)-1):
+    for j in range(len(b)-1):
+      if a[i] == b[j]:
+        if a[i+1] == b[j+1]:
+          sim += combo_constant
+  return sim
+
+def calc_letter_distance(a,b):
+  return 0
 
 #removes any non-letter elements from a string
 def remove_spaces(a):
@@ -59,7 +51,7 @@ for word in words:
   
   for i in words:
     if i != word:
-      sim_array.append([similarity(word, i)+similarity(i, word), i])
+      sim_array.append([calc_consecutive_letters(word, i)+calc_letter_distance(word, i), i])
 
   for i in range(len(sim_array)):
     if sim_array[i] == max(sim_array):
@@ -78,7 +70,7 @@ while still_going:
   
   for i in words:
     if i != word:
-      sim_array.append([similarity(word, i)+similarity(i, word), i])
+      sim_array.append([calc_consecutive_letters(word, i)+calc_letter_distance(word, i), i])
 
   for i in range(len(sim_array)):
     if sim_array[i] == max(sim_array):
